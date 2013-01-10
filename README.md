@@ -1,4 +1,2 @@
-hangmanemone
-============
-
-MTG Hangman IRC bot
+ircbot
+======
