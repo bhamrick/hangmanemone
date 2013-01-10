@@ -8,7 +8,6 @@ class BotConfig(object):
         self.channel = None
         self.nick = None
         self.password = None
-        self.rules = []
 
     # _scan_X: scan line from index for the extent of X
     # Returns the token
@@ -96,11 +95,3 @@ class BotConfig(object):
                             self.port = int(s[1])
                         except ValueError:
                             assert False, "Bad port"
-            elif len(tokens) > 0 and tokens[0] == 'rule':
-                if len(rule_tokens) > 0:
-                    self.rules.append(Rule(rule_tokens))
-                rule_tokens = [tokens]
-            elif len(tokens) > 0:
-                rule_tokens.append(tokens)
-        if len(rule_tokens) > 0:
-            self.rules.append(Rule(rule_tokens))

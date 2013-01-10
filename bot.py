@@ -8,13 +8,11 @@ from rule import Rule
 
 DEBUG = True
 
-class MusselBot(irc.bot.SingleServerIRCBot):
-    def __init__(self, channel, nickname, server, port=6667, password=None, rules=[]):
+class Hangmanemone(irc.bot.SingleServerIRCBot):
+    def __init__(self, channel, nickname, server, port=6667, password=None):
         print "Initializing"
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, nickname)
         self.channel = channel
-        self.rules = rules
-        self.env = {}
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + '_')
@@ -42,14 +40,6 @@ class MusselBot(irc.bot.SingleServerIRCBot):
 
     def on_pubmsg(self, c, e):
         self.log_event(e)
-        self.env["user"] = e.source.split("!", 1)[0]
-        self.env["channel"] = e.target
-        self.env["message"] = e.arguments[0]
-        self.env["ch_names"] = self.channels[e.target].userdict
-        self.env["ch_ops"] = self.channels[e.target].operdict
-        self.env["ch_voiced"] = self.channels[e.target].voiceddict
-        for rule in self.rules:
-            rule.run(c, self.env)
 
     def on_privmsg(self, c, e):
         self.log_event(e)
@@ -87,8 +77,7 @@ def main():
                     conf.nick,
                     conf.server,
                     conf.port,
-                    conf.password,
-                    conf.rules)
+                    conf.password)
     bot.start()
 
 if __name__ == "__main__":
