@@ -4,7 +4,6 @@ import irc.strings
 from irc.client import ip_numstr_to_quad, ip_quad_to_numstr
 
 from conf import BotConfig
-from rule import Rule
 
 DEBUG = True
 
@@ -73,7 +72,7 @@ def main():
     conf = BotConfig()
     conf.parseFile(sys.argv[1])
 
-    bot = MusselBot(conf.channel,
+    bot = Hangmanemone(conf.channel,
                     conf.nick,
                     conf.server,
                     conf.port,

@@ -1,5 +1,3 @@
-from rule import Rule
-
 class BotConfig(object):
     def __init__(self):
         # Default values
