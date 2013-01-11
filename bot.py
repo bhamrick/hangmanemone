@@ -5,6 +5,9 @@ from irc.client import ip_numstr_to_quad, ip_quad_to_numstr
 
 from conf import BotConfig
 
+from card_data import CardDatabase
+from hangman import Hangman
+
 DEBUG = True
 
 class Hangmanemone(irc.bot.SingleServerIRCBot):
@@ -12,6 +15,9 @@ class Hangmanemone(irc.bot.SingleServerIRCBot):
         print "Initializing"
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, nickname)
         self.channel = channel
+
+        database = CardDatabase("cardtext.scv")
+        self.HangmanController = Hangman(databse.data)
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + '_')
