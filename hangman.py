@@ -1,13 +1,16 @@
 import random, re #, irc
+import time
 
 BASE_TIME = 10
 TIME_INCREMENT = 5
+POLL_RATE = 1
 
 class Hangman():
     def __init__(self, mysteries):
         self.mystery_dict = mysteries
         self.mystery_name = None
         self.mystery = None
+        self.last_clue = 0
         self.next_timedelay = BASE_TIME
         self.num_mysteries = 0
 
@@ -16,7 +19,7 @@ class Hangman():
             return False
         # match string, regex
         print "Attempting to match %r with %r" % (message, pattern)
-        keep_chars = 'abcdefghijklmnopqrstuvwxyz0123456789 '
+        keep_chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
         # Canonicalize both strings
         message = message.strip().lower()
         pattern = pattern.strip().lower()
@@ -58,19 +61,22 @@ class Hangman():
             return False
 
     def add_clue(self, connection, env): 
-        new_attribute = self.random_key(self.mystery)
-        if (new_attribute != None):
-            new_clue = self.mystery.pop(new_attribute)
-            msg = "New clue: "+ str(new_attribute)+ " is " + str(new_clue)+ "."
-            self._say(connection, env, msg)
-            connection.execute_delayed(self.next_timedelay, self.add_clue, (connection, env))
-            self.next_timedelay += TIME_INCREMENT
-            return True
-        else:
-            msg = "Nobody got it! The card was %s" % self.mystery_name
-            self._say(connection, env, msg)
-            self.pick_mystery(connection, env)
-            return False
+        cur_time = time.time()
+        connection.execute_delayed(POLL_RATE, self.add_clue, (connection, env))
+        if cur_time > self.last_clue + self.next_timedelay:
+            new_attribute = self.random_key(self.mystery)
+            if (new_attribute != None):
+                new_clue = self.mystery.pop(new_attribute)
+                msg = "New clue: "+ str(new_attribute)+ " is " + str(new_clue)+ "."
+                self._say(connection, env, msg)
+                self.last_clue = cur_time
+                self.next_timedelay += TIME_INCREMENT
+                return True
+            else:
+                msg = "Nobody got it! The card was %s" % self.mystery_name
+                self._say(connection, env, msg)
+                self.pick_mystery(connection, env)
+                return False
 
     def mystery_solved(self, connection, env): #should be called upon each new chat entry
         if (self._match(connection, env, env["message"], self.mystery_name)): #connection, env, message, self.mystery)): #idk what to pass in for "message"

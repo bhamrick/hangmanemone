@@ -1,3 +1,5 @@
+import unicodedata
+
 REPLACEMENTS = [
     ('\xe2\x80\x94', '-'),
     ('\xe2\x80\x98', '\''),
@@ -19,6 +21,10 @@ class CardDatabase(object):
         desired_cols = ["set", "type", "power", "toughness", "loyalty", "converted_manacost", "artist", "flavor", "color", "rarity"]
         key = "name"
         csv_data = open(fname).read()
+        # Remove all non-ascii characters, attempting to keep the things sane
+        csv_data = csv_data.decode('utf-8')
+        csv_data = unicodedata.normalize('NFD', csv_data)
+        csv_data = csv_data.encode('ascii','ignore')
         # Some of the data is strange, so apply the replacements as given at the top of the file
         for old, new in REPLACEMENTS:
             csv_data = csv_data.replace(old, new)
