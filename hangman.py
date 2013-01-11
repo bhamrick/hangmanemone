@@ -5,6 +5,7 @@ class Hangman():
         self.mystery_dict = mysteries
         self.mystery_name = None
         self.mystery = None
+        self.next_timedelay = 10
 
     def _match(self, connection, env, message, regex): 
         if not regex:
@@ -18,6 +19,8 @@ class Hangman():
         # send a message to the channel from which
         # the event came, which is in env["channel"]
 
+        if len(msg) > 500:
+            msg = msg[:500]
         chan = env["channel"]
         connection.privmsg(chan, msg)
         #print "Saying %r to %r" % (msg, chan)
@@ -38,7 +41,7 @@ class Hangman():
             print "Mystery is ", self.mystery_name
             self._say(connection, env, "I am thinking of a card.")
             self.add_clue(connection, env)
-            #connection.execute_delayed(3, self.add_clue, (connection, env))
+            self.next_timedelay = 10
             return True
         else:
             print "No more cards left!"
@@ -50,10 +53,13 @@ class Hangman():
             new_clue = self.mystery.pop(new_attribute)
             msg = "New clue: "+ str(new_attribute)+ " is " + str(new_clue)+ "."
             self._say(connection, env, msg)
+            connection.execute_delayed(self.next_timedelay, self.add_clue, (connection, env))
+            self.next_timedelay += 5
             return True
         else:
-            msg = "No hints left!"
+            msg = "Nobody got it! The card was %s" % self.mysetery_name
             self._say(connection, env, msg)
+            self.pick_mystery(connection, env)
             return False
 
     def mystery_solved(self, connection, env): #should be called upon each new chat entry
@@ -63,5 +69,4 @@ class Hangman():
             # say who won and what the card was
             self._say(connection, env, "%s was correct. The card was %s" % (env["user"], self.mystery_name))
             self.pick_mystery(connection, env)
-            #connection.execute_delayed(3, self.pick_mystery, (connection, env)) #go get new mystery
         return
