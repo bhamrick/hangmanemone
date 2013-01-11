@@ -1,11 +1,14 @@
 import random, re #, irc
 
+BASE_TIME = 5
+TIME_INCREMENT = 5
+
 class Hangman():
     def __init__(self, mysteries):
         self.mystery_dict = mysteries
         self.mystery_name = None
         self.mystery = None
-        self.next_timedelay = 10
+        self.next_timedelay = BASE_TIME
 
     def _match(self, connection, env, message, regex): 
         if not regex:
@@ -41,7 +44,7 @@ class Hangman():
             print "Mystery is ", self.mystery_name
             self._say(connection, env, "I am thinking of a card.")
             self.add_clue(connection, env)
-            self.next_timedelay = 10
+            self.next_timedelay = BASE_TIME
             return True
         else:
             print "No more cards left!"
@@ -54,10 +57,10 @@ class Hangman():
             msg = "New clue: "+ str(new_attribute)+ " is " + str(new_clue)+ "."
             self._say(connection, env, msg)
             connection.execute_delayed(self.next_timedelay, self.add_clue, (connection, env))
-            self.next_timedelay += 5
+            self.next_timedelay += TIME_INCREMENT
             return True
         else:
-            msg = "Nobody got it! The card was %s" % self.mysetery_name
+            msg = "Nobody got it! The card was %s" % self.mystery_name
             self._say(connection, env, msg)
             self.pick_mystery(connection, env)
             return False
