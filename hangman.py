@@ -36,6 +36,7 @@ class Hangman():
         if (self.mystery_name != None):
             self.mystery = self.mystery_dict[self.mystery_name]
             print "Mystery is ", self.mystery_name
+            self.add_clue(connection, env)
             return True
         else:
             print "No more cards left!"
@@ -58,5 +59,5 @@ class Hangman():
             print "match found!"
             self.mystery_dict.pop(self.mystery_name) #if so, pop current mystery off mystery_dict
             # say who won and what the card was
-            self.pick_mystery() #go get new mystery
+            self.pick_mystery(connection, env) #go get new mystery
         return

@@ -16,8 +16,8 @@ class Hangmanemone(irc.bot.SingleServerIRCBot):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, nickname)
         self.channel = channel
 
-        database = CardDatabase("cardtext.scv")
-        self.HangmanController = Hangman(databse.data)
+        database = CardDatabase("cardtext.csv")
+        self.HangmanController = Hangman(database.data)
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + '_')
@@ -55,7 +55,7 @@ class Hangmanemone(irc.bot.SingleServerIRCBot):
         elif message.startswith("!addclue"):
             self.HangmanController.add_clue(c, env)
         else:
-            self.HangmanController.mysetery_solved(c, env)
+            self.HangmanController.mystery_solved(c, env)
 
     def on_privmsg(self, c, e):
         self.log_event(e)
