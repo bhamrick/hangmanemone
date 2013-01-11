@@ -1,5 +1,7 @@
 REPLACEMENTS = [
     ('\xe2\x80\x94', '-'),
+    ('#_', ''),
+    ('_#', ''),
     ]
 
 class CardDatabase(object):
