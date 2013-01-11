@@ -45,6 +45,17 @@ class Hangmanemone(irc.bot.SingleServerIRCBot):
 
     def on_pubmsg(self, c, e):
         self.log_event(e)
+        message = e.arguments[0]
+        env = {}
+        env['message'] = message
+        env['user'] = e.source.split("!", 1)[0]
+        env['channel'] = e.target
+        if message.startswith("!newcard"):
+            self.HangmanController.pick_mystery(c, env)
+        elif message.startswith("!addclue"):
+            self.HangmanController.add_clue(c, env)
+        else:
+            self.HangmanController.mysetery_solved(c, env)
 
     def on_privmsg(self, c, e):
         self.log_event(e)
