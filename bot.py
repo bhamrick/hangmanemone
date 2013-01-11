@@ -54,6 +54,13 @@ class Hangmanemone(irc.bot.SingleServerIRCBot):
             self.HangmanController.pick_mystery(c, env)
         elif message.startswith("!addclue"):
             self.HangmanController.add_clue(c, env)
+        elif message.startswith("!hangman"):
+            try:
+                num = int(message.split()[1])
+                self.HangmanController.num_mysteries += num
+                self.HangmanController.pick_mystery(c, env)
+            except ValueError:
+                pass
         else:
             self.HangmanController.mystery_solved(c, env)
 

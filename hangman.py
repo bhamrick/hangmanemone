@@ -9,6 +9,7 @@ class Hangman():
         self.mystery_name = None
         self.mystery = None
         self.next_timedelay = BASE_TIME
+        self.num_mysteries = 0
 
     def _match(self, connection, env, message, regex): 
         if not regex:
@@ -71,5 +72,7 @@ class Hangman():
             self.mystery_dict.pop(self.mystery_name) #if so, pop current mystery off mystery_dict
             # say who won and what the card was
             self._say(connection, env, "%s was correct. The card was %s" % (env["user"], self.mystery_name))
-            self.pick_mystery(connection, env)
+            self.num_mysteries -= 1
+            if self.num_mysteries > 0:
+                self.pick_mystery(connection, env)
         return
