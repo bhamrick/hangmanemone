@@ -51,8 +51,8 @@ class Hangman():
             self._say(connection, env, msg) #connection, env, msg)
             return False
 
-    def mystery_solved(self, message, connection, env): #should be called upon each new chat entry
-        if (self._match(connection, env, message, self.mystery_name)): #connection, env, message, self.mystery)): #idk what to pass in for "message"
+    def mystery_solved(self, connection, env): #should be called upon each new chat entry
+        if (self._match(connection, env, env["message"], self.mystery_name)): #connection, env, message, self.mystery)): #idk what to pass in for "message"
             print "match found!"
             self.mystery_dict.pop(self.mystery_name) #if so, pop current mystery off mystery_dict
             # say who won and what the card was
