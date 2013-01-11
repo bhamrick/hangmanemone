@@ -6,12 +6,12 @@ class Hangman():
         self.mystery_name = None
         self.mystery = None
 
-    def _match(self, message, regex): #, connection, env, message, regex):
+    def _match(self, connection, env, message, regex): 
         # match string, regex
         print "Attempting to match %r with %r" % (message, regex)
         return re.search(regex, message)
         
-    def _say(self, msg): #, connection, env, msg):
+    def _say(self, connection, env, msg): 
         # say message
         # send a message to the channel from which
         # the event came, which is in env["channel"]
@@ -29,28 +29,30 @@ class Hangman():
         else:
             return None
         
-    def pick_mystery(self): #, connection, env):
+    def pick_mystery(self, connection, env):
         self.mystery_name = self.random_key(self.mystery_dict)
         if (self.mystery_name != None):
             self.mystery = self.mystery_dict[self.mystery_name]
             print "Mystery is ", self.mystery_name
+            return True
         else:
             print "No more cards left!"
-        return
+            return False
 
-    def add_clue(self): #, connection, env):
+    def add_clue(self, connection, env): 
         new_attribute = self.random_key(self.mystery)
         if (new_attribute != None):
             new_clue = self.mystery.pop(new_attribute)
             msg = "New clue: "+ str(new_attribute)+ " is " + str(new_clue)+ "."
-            self._say(msg) #connection, env, msg)
+            self._say(connection, env, msg) #connection, env, msg)
+            return True
         else:
             msg = "No hints left!"
-            self._say(msg) #connection, env, msg)
-        return
+            self._say(connection, env, msg) #connection, env, msg)
+            return False
 
-    def mystery_solved(self, message): #, connection, env): #should be called upon each new chat entry
-        if (self._match(message, self.mystery_name)): #connection, env, message, self.mystery)): #idk what to pass in for "message"
+    def mystery_solved(self, message, connection, env): #should be called upon each new chat entry
+        if (self._match(connection, env, message, self.mystery_name)): #connection, env, message, self.mystery)): #idk what to pass in for "message"
             print "match found!"
             self.mystery_dict.pop(self.mystery_name) #if so, pop current mystery off mystery_dict
             # say who won and what the card was
