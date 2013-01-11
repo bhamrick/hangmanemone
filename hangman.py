@@ -1,6 +1,6 @@
 import random, re #, irc
 
-BASE_TIME = 5
+BASE_TIME = 10
 TIME_INCREMENT = 5
 
 class Hangman():
@@ -11,12 +11,18 @@ class Hangman():
         self.next_timedelay = BASE_TIME
         self.num_mysteries = 0
 
-    def _match(self, connection, env, message, regex): 
-        if not regex:
+    def _match(self, connection, env, message, pattern):
+        if not pattern:
             return False
         # match string, regex
-        print "Attempting to match %r with %r" % (message, regex)
-        return re.search(regex, message)
+        print "Attempting to match %r with %r" % (message, pattern)
+        keep_chars = 'abcdefghijklmnopqrstuvwxyz0123456789 '
+        # Canonicalize both strings
+        message = message.strip().lower()
+        pattern = pattern.strip().lower()
+        message = filter(lambda x: x in keep_chars, message)
+        pattern = filter(lambda x: x in keep_chars, pattern)
+        return message == pattern
         
     def _say(self, connection, env, msg): 
         # say message
@@ -44,8 +50,8 @@ class Hangman():
             self.mystery = self.mystery_dict[self.mystery_name]
             print "Mystery is ", self.mystery_name
             self._say(connection, env, "I am thinking of a card.")
-            self.add_clue(connection, env)
             self.next_timedelay = BASE_TIME
+            self.add_clue(connection, env)
             return True
         else:
             print "No more cards left!"
